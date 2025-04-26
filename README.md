@@ -1,50 +1,60 @@
-# Welcome to your Expo app 👋
+# JayNotes
+JayNotes is a simple and efficient note-taking app designed for Android. It allows you to create and manage text, audio, and video notes, and organize them by date using an integrated calendar. The app also supports multiple user profiles, so you can keep each user's notes separate and secure.
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+JayNotes is built with React Native and Expo and is designed to work fully offline. All data—text, audio, and video notes—are stored locally on the device.
 
-## Get started
+- ### [Installation](#installation)
+- ### [How It Works](#how-it-works)
+- ### [Future Improvements](#future-improvements)
 
-1. Install dependencies
+## Features
 
-   ```bash
-   npm install
-   ```
+- Text, Audio, and Video Notes: Capture and store notes in various formats—text, audio, or video.
 
-2. Start the app
+- Calendar Integration: Assign each note to a specific date and access them easily through an intuitive calendar interface.
 
-   ```bash
-    npx expo start
-   ```
+- Multi-User Support: Multiple users can share the same device, each with their own notes and profiles.
 
-In the output, you'll find options to open the app in a
+- Offline Access: All data is stored locally, ensuring the app works seamlessly even without an internet connection.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- Profile Management: Secure login with password protection, along with quick access to recent user profiles by displaying profile pictures.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Tech Stack
 
-## Get a fresh project
+- React Native: Framework for building cross-platform mobile apps.
 
-When you're ready, run:
+- Expo: Provides tools for development and deployment of React Native apps.
 
-```bash
-npm run reset-project
-```
+- Expo Local Storage: Stores notes and user data securely on the device.
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+- Expo-SQLite: Manages and organizes the local database for efficient offline access.
 
-## Learn more
+## Installation
 
-To learn more about developing your project with Expo, look at the following resources:
+JayNotes is available as a direct APK download for Android.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+1. Go to the [Releases](#) section.
+2. [Download The Latest APK](https://github.com/0JK0/JayNotes/releases)
+3. Transfer it to your Android device if needed.
+4. Open it and follow the installation prompts.
 
-## Join the community
 
-Join our community of developers creating universal apps.
+## How It Works
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Upon opening the app, users can:
+
+ - Create a new account with a username and password.
+
+ - Add notes in text, audio, or video format by selecting a date on the calendar.
+
+ - Access their notes at any time, organized by date and user profile.
+
+## Future Improvements
+
+ - Cloud Sync: Sync notes across devices.
+
+ - Reminders: Integrate notifications to remind users about specific notes or events.
+
+ - Rich Text Editor: Add support for text formatting, such as bold, italics, and bullet points.
+
+ - File Attachments: Allow users to attach images or documents to text notes.
