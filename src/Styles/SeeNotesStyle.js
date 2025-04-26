@@ -52,6 +52,16 @@ const styles = StyleSheet.create({
 
     },
 
+    videoPreview: {
+        width: '80%',
+        height: '60%', 
+        backgroundColor: '#000',
+    
+        margin: 20,
+
+    },
+
+
     NoteBody: {
         
         paddingHorizontal: 15,

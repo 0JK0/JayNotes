@@ -20,6 +20,8 @@ export default function Index() {
           `CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE, password TEXT, image TEXT);`
       );
 
+
+      
     } catch(error){
 
       console.error("ERROR CREATIG USERS DB: ",error)
@@ -37,9 +39,11 @@ export default function Index() {
           title TEXT ,
           body TEXT, 
           noteType TEXT, 
+          videoPath TEXT,
           userId INTEGER,
           FOREIGN KEY(userId) REFERENCES users(id) ON DELETE CASCADE);`
       );
+
     } catch (error){
 
       console.error("ERROR CREATIG NOTES DB: ",error)

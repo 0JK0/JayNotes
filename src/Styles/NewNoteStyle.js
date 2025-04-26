@@ -6,6 +6,8 @@ const styles = StyleSheet.create({
 
     Container:{
 
+        flex:1,
+
         backgroundColor: '#000',
 
         alignItems: 'center',
@@ -24,6 +26,15 @@ const styles = StyleSheet.create({
         color:'#fff',
     
         fontFamily:'Mx437',
+
+    },
+
+    videoPreview: {
+        width: '80%',
+        height: '60%', 
+        backgroundColor: '#000',
+    
+        margin: 20,
 
     },
 

@@ -1,9 +1,10 @@
 import { Text,View,ScrollView,Pressable,Animated,Alert  } from "react-native"
 import { useRoute } from '@react-navigation/native';
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 import { useNavigation } from '@react-navigation/native';
 import { useSQLiteContext } from "expo-sqlite";
+import { Video } from 'expo-av';
 
 import styles from "../Styles/SeeNotesStyle";
 import {deleteNoteById} from '../Database/notesDb'
@@ -90,6 +91,18 @@ export default function SeeNoteScreen() {
     const { note } = route.params;
 
     const [reloadData, setReloadData] = useState(false);
+    const [videoUri, setVideoUri] = useState("");
+
+    console.log(note)
+
+    useEffect(() => {
+        if (note.noteType == 'video') {
+
+            setVideoUri(note.videoPath);
+    
+        }
+    },[note]);
+
 
     const handleDelete = () => {
         Alert.alert(
@@ -117,10 +130,27 @@ export default function SeeNoteScreen() {
 
             <Text style={styles.Title}>{note.title}</Text>
             <Text style={styles.Date}>{note.date}</Text>
+
+            {videoUri && (
+                    <Video
+                        source={{ uri: videoUri }}
+                        style={styles.videoPreview}
+                        resizeMode="contain"
+                        shouldPlay={true}
+                        isMuted={false}
+                        useNativeControls
+                    />
+            )}
     
-            <ScrollView style={styles.BodyWrapper} >
+            {!videoUri &&(
+
+                <ScrollView style={styles.BodyWrapper} >
+
                 <Text style={styles.NoteBody}>{note.body}</Text>
-            </ScrollView>
+                </ScrollView>
+
+            )}
+
 
             <CustomButton onPress={handleDelete} />
 

@@ -11,13 +11,14 @@ Installed:
   expo-crypto
   react-native-async-storage
   expo-secure-store
+  expo-camara
+  expo-av
+  expo-media-libary(npx expo)
+
 
 unistalled:
   expo-route
   react-native-image-picker
 
 ToInstall:
-expo-av (Record Audio)
-expo-camara
-expo-file-system (Store media)
 expo-asset

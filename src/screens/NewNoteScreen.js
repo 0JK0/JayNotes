@@ -1,12 +1,17 @@
-import { KeyboardAvoidingView,ScrollView, SafeAreaView, View,TextInput } from 'react-native';
+import { KeyboardAvoidingView,ScrollView, SafeAreaView, View,TextInput,Text } from 'react-native';
 import { useState,useEffect } from 'react';
 
 import {useNavigation,useRoute } from '@react-navigation/native';
 import { useSQLiteContext } from "expo-sqlite";
+import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
+import { Video } from 'expo-av';
+
 import Icon from 'react-native-vector-icons/Feather';
 
 import styles from '../Styles/NewNoteStyle';
 import CustomButton from '../components/Button'
+
 
 import { saveNewNote } from '../Database/notesDb';
 import { getCurrentUser, } from '../Database/db';
@@ -17,6 +22,8 @@ export default function NewNoteScreen({  }) {
     const DB = useSQLiteContext();
     const navigation = useNavigation();
 
+    const [videoUri, setVideoUri] = useState();
+
     const [title,setTitle] = useState ('');
     const [body,setBody] = useState ('');
     const [date,setDate] = useState('')
@@ -24,6 +31,8 @@ export default function NewNoteScreen({  }) {
 
     const route = useRoute();
     const { calendarDate } = route.params ?? {};
+    
+
 
     function getCurrentDate() {
         if (calendarDate) {
@@ -61,6 +70,8 @@ export default function NewNoteScreen({  }) {
             const { userName, userId } = session;
             console.log("> Session unpacked", userName, userId);
     
+
+
             console.log(`==== DATE: ${date} == currentUser: ${userName} ==== UserID: ${userId} =====`);
     
             //TEMPORAL
@@ -69,7 +80,7 @@ export default function NewNoteScreen({  }) {
 
             try{
 
-                await saveNewNote(date,title,body,noteType,userId,DB);
+                await saveNewNote(date,title,body,noteType,videoUri,userId,DB);
     
             }catch(error){console.error("Handle Save --> saveNewNote Error: ",error)}
     
@@ -85,14 +96,83 @@ export default function NewNoteScreen({  }) {
 
     }
     
-    const handleVideoNote = async () => {
+    
 
+    const handleVideoNote = async () => {
+        
         try{
 
             setNoteType('video')
             console.log("noteType = ",noteType)
 
-        } catch {error} {
+
+            const permission = await ImagePicker.requestCameraPermissionsAsync();
+            if (!permission.granted) {
+                console.warn("Camera permission not granted");
+                return;
+            }
+    
+            const result = await ImagePicker.launchCameraAsync({
+                mediaTypes: ['videos'],
+                allowsEditing: false,
+                quality: 1,
+            });
+
+
+            
+            if (!result.canceled) {
+
+
+                const uri = result.assets[0].uri;
+                console.log("Captured video URI:", uri);
+
+                console.log("++ Getting session...");
+                const session = await getCurrentUser();
+                console.log(" Session result: ", session);
+        
+                if (!session) {
+        
+                    console.log("No user session found.");
+                    return;
+        
+                } 
+        
+                const { userName, userId } = session;
+                console.log("> Session unpacked", userName, userId);
+
+                const userVideoDir = `${FileSystem.documentDirectory}users/${userId}/videos/`;
+                console.log("userDirectory is: ",userVideoDir)
+
+                await FileSystem.makeDirectoryAsync(userVideoDir, { intermediates: true });
+
+                function generateRandom() {
+                   
+                    const randomNumber = Math.floor(Math.random() * 9000) + 1000;
+                  
+                    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                    let randomString = '';
+                    for (let i = 0; i < 3; i++) {
+                      randomString += letters.charAt(Math.floor(Math.random() * letters.length));
+                    }
+                  
+                    return randomNumber + randomString;
+                }
+                  
+                let randomAddOn = generateRandom() // i know there is a library that is more fancy and cool, let em have some fun
+                const filename = `video-${getCurrentDate()}-${randomAddOn}.mp4`;
+                const newPath = userVideoDir + filename;
+
+                await FileSystem.moveAsync({
+                    from: uri,
+                    to: newPath,
+                });
+
+                console.log("Moved video to persistent storage:", newPath);
+                setVideoUri(newPath)
+
+            }
+
+        } catch (error) {
 
             console.error("handleVideoNote ERROR: ",error)
 
@@ -109,7 +189,7 @@ export default function NewNoteScreen({  }) {
             console.log("noteType = ",noteType)
 
 
-        } catch {error} {
+        } catch (error) {
 
             console.error("handleAudioNote ERROR: ",error)
 
@@ -121,7 +201,12 @@ export default function NewNoteScreen({  }) {
 
     return(
         <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+
         <KeyboardAvoidingView style={{ flex: 1 } }>
+
+
+
+
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
 
             <View style={styles.Container}>
@@ -137,24 +222,31 @@ export default function NewNoteScreen({  }) {
                 value={title}
                 onChangeText={setTitle}
                                 
-            />
+            />a
 
-            <TextInput 
+            {videoUri && (
+                <Video
+                    source={{ uri: videoUri }}
+                    style={styles.videoPreview}
+                    resizeMode="contain"
+                    shouldPlay={true}
+                    isMuted={false}
+                    useNativeControls
+                />
+            )}
 
-                style={styles.NoteBody} 
-
-                multiline={true}
-                scrollEnabled={false}
-                textAlignVertical="top"
-
-                placeholder='' 
-                placeholderTextColor='#c6c3c3' 
-
-                value={body}
-
-                onChangeText={setBody}
-
-            />
+            {!videoUri && (
+                <TextInput
+                    style={styles.NoteBody}
+                    multiline={true}
+                    scrollEnabled={false}
+                    textAlignVertical="top"
+                    placeholder=""
+                    placeholderTextColor="#c6c3c3"
+                    value={body}
+                    onChangeText={setBody}
+                />
+            )}
 
             <View style={styles.ButtonZone}>
 
