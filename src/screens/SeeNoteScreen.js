@@ -1,4 +1,4 @@
-import { Text,View,ScrollView,Pressable,Animated,Alert  } from "react-native"
+import { Text,View,ScrollView,Pressable,Animated,Alert,StatusBar  } from "react-native"
 import { useRoute } from '@react-navigation/native';
 import { useEffect, useState } from "react"
 
@@ -8,6 +8,7 @@ import { Video } from 'expo-av';
 
 import styles from "../Styles/SeeNotesStyle";
 import {deleteNoteById} from '../Database/notesDb'
+import { AudioPlayerComponent } from "../components/AudioNote";
 
 const CustomButton = ({ onPress}) => {
 
@@ -83,6 +84,8 @@ const CustomButton = ({ onPress}) => {
 };
 
 export default function SeeNoteScreen() {
+
+
     
     const DB = useSQLiteContext();
     const navigation = useNavigation();
@@ -91,14 +94,14 @@ export default function SeeNoteScreen() {
     const { note } = route.params;
 
     const [reloadData, setReloadData] = useState(false);
-    const [videoUri, setVideoUri] = useState("");
+    const [fileUri, setFileUri] = useState("");
 
     console.log(note)
 
     useEffect(() => {
-        if (note.noteType == 'video') {
+        if (note.noteType) {
 
-            setVideoUri(note.videoPath);
+            setFileUri(note.filePath);
     
         }
     },[note]);
@@ -131,9 +134,9 @@ export default function SeeNoteScreen() {
             <Text style={styles.Title}>{note.title}</Text>
             <Text style={styles.Date}>{note.date}</Text>
 
-            {videoUri && (
+            {(fileUri && note.noteType === 'video') && (
                     <Video
-                        source={{ uri: videoUri }}
+                        source={{ uri: fileUri }}
                         style={styles.videoPreview}
                         resizeMode="contain"
                         shouldPlay={true}
@@ -142,12 +145,19 @@ export default function SeeNoteScreen() {
                     />
             )}
     
-            {!videoUri &&(
+            {!fileUri &&(
 
                 <ScrollView style={styles.BodyWrapper} >
 
                 <Text style={styles.NoteBody}>{note.body}</Text>
                 </ScrollView>
+
+            )}
+
+            {(fileUri && note.noteType === 'audio') && (
+
+                <AudioPlayerComponent filePath={fileUri}/>
+
 
             )}
 

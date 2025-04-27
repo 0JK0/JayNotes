@@ -10,8 +10,8 @@ import { Video } from 'expo-av';
 import Icon from 'react-native-vector-icons/Feather';
 
 import styles from '../Styles/NewNoteStyle';
-import CustomButton from '../components/Button'
-
+import CustomButton from '../components/Button';
+import { AudioNoteComponent } from '../components/AudioNote';
 
 import { saveNewNote } from '../Database/notesDb';
 import { getCurrentUser, } from '../Database/db';
@@ -22,7 +22,9 @@ export default function NewNoteScreen({  }) {
     const DB = useSQLiteContext();
     const navigation = useNavigation();
 
-    const [videoUri, setVideoUri] = useState();
+    const [fileUri, setFileUri] = useState();
+    const [audioUri, setAudioUri] = useState('');
+    const [audioNote,setAudioNote] = useState(false);
 
     const [title,setTitle] = useState ('');
     const [body,setBody] = useState ('');
@@ -32,8 +34,6 @@ export default function NewNoteScreen({  }) {
     const route = useRoute();
     const { calendarDate } = route.params ?? {};
     
-
-
     function getCurrentDate() {
         if (calendarDate) {
             console.log("CALENDAR DATE: ",calendarDate.dateString)
@@ -80,7 +80,7 @@ export default function NewNoteScreen({  }) {
 
             try{
 
-                await saveNewNote(date,title,body,noteType,videoUri,userId,DB);
+                await saveNewNote(date,title,body,noteType,fileUri,userId,DB);
     
             }catch(error){console.error("Handle Save --> saveNewNote Error: ",error)}
     
@@ -95,8 +95,21 @@ export default function NewNoteScreen({  }) {
 
 
     }
-    
-    
+
+    function generateRandom() {
+                   
+        const randomNumber = Math.floor(Math.random() * 9000) + 1000;
+      
+        const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        let randomString = '';
+        for (let i = 0; i < 3; i++) {
+          randomString += letters.charAt(Math.floor(Math.random() * letters.length));
+        }
+      
+        return randomNumber + randomString;
+    }
+      
+
 
     const handleVideoNote = async () => {
         
@@ -145,19 +158,7 @@ export default function NewNoteScreen({  }) {
 
                 await FileSystem.makeDirectoryAsync(userVideoDir, { intermediates: true });
 
-                function generateRandom() {
-                   
-                    const randomNumber = Math.floor(Math.random() * 9000) + 1000;
-                  
-                    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-                    let randomString = '';
-                    for (let i = 0; i < 3; i++) {
-                      randomString += letters.charAt(Math.floor(Math.random() * letters.length));
-                    }
-                  
-                    return randomNumber + randomString;
-                }
-                  
+
                 let randomAddOn = generateRandom() // i know there is a library that is more fancy and cool, let em have some fun
                 const filename = `video-${getCurrentDate()}-${randomAddOn}.mp4`;
                 const newPath = userVideoDir + filename;
@@ -168,7 +169,7 @@ export default function NewNoteScreen({  }) {
                 });
 
                 console.log("Moved video to persistent storage:", newPath);
-                setVideoUri(newPath)
+                setFileUri(newPath)
 
             }
 
@@ -181,12 +182,62 @@ export default function NewNoteScreen({  }) {
 
     }
 
+    const handleAudioStop = async (uri) => {
+        try{
+
+            console.log('NewNoteScreen -- Audio URI received: ', uri);
+            setAudioUri(uri);
+
+
+            const session = await getCurrentUser();
+
+            if (!session) {
+                console.log("No user session found.");
+                return;
+            }
+
+            const { userId } = session;
+
+            const userAudioDir = `${FileSystem.documentDirectory}users/${userId}/audios/`;
+            console.log("userAudioDir: ", userAudioDir);
+    
+            await FileSystem.makeDirectoryAsync(userAudioDir, { intermediates: true });
+
+            const filename = `audio-${getCurrentDate()}-${generateRandom()}.m4a`; 
+            const newPath = userAudioDir + filename;
+
+            await FileSystem.moveAsync({
+                from: uri,
+                to: newPath,
+            });
+
+            console.log("Moved audio to persistent storage:", newPath);
+
+            setFileUri(newPath);
+
+
+        } catch(error){ console.error("handleAudioStop ERROR: ",error)}
+ 
+    }
+
     const handleAudioNote = async () => {
 
         try{
 
-            setNoteType('audio')
-            console.log("noteType = ",noteType)
+            console.log("Audio Note Button Pressed");
+
+            if(audioNote === false){
+                setNoteType('audio')
+                console.log("noteType = ",noteType)
+    
+                setAudioNote(true);    
+            } else {
+
+                setAudioNote(false)
+                setNoteType('text')
+                console.log("noteType = ",noteType)
+
+            }
 
 
         } catch (error) {
@@ -222,11 +273,11 @@ export default function NewNoteScreen({  }) {
                 value={title}
                 onChangeText={setTitle}
                                 
-            />a
+            />
 
-            {videoUri && (
+            {(fileUri && noteType === 'video') && (
                 <Video
-                    source={{ uri: videoUri }}
+                    source={{ uri: fileUri }}
                     style={styles.videoPreview}
                     resizeMode="contain"
                     shouldPlay={true}
@@ -235,7 +286,7 @@ export default function NewNoteScreen({  }) {
                 />
             )}
 
-            {!videoUri && (
+            {(!fileUri && !audioNote) && (
                 <TextInput
                     style={styles.NoteBody}
                     multiline={true}
@@ -247,6 +298,11 @@ export default function NewNoteScreen({  }) {
                     onChangeText={setBody}
                 />
             )}
+
+            {audioNote && (
+                <AudioNoteComponent onAudioStop={handleAudioStop} />
+            )}
+
 
             <View style={styles.ButtonZone}>
 

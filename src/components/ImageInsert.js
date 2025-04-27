@@ -4,7 +4,7 @@ import { useState } from "react"
 import * as FileSystem from 'expo-file-system'
 import * as ImagePicker from 'expo-image-picker';
 
-
+import Icon from 'react-native-vector-icons/Feather';
 import CustomButton from "./Button";
 
 
@@ -37,7 +37,7 @@ const PfpUpload = ({username,onImageSelected}) => {
 
             <View style={styles.ProfileZone}>
 
-            <Image style={styles.UserPFP}  source={{uri: UserImage || 'https://img.icons8.com/windows/32/user.png',}}/>
+            <Image style={styles.UserPFP}  source={UserImage ? { uri: UserImage } : require('../../assets/images/user.png')}/>
             <Text style={styles.UserName}>{username}</Text>
             
             </View>
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
         borderRadius: 100,
 
         marginTop: 30,
-        marginBottom: 20,
+        marginBottom: 10,
 
         backgroundColor: '#fff',
 

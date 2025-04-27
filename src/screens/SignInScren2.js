@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
 import { Text, View,TextInput,Image } from 'react-native';
 
+
 import { useNavigation } from '@react-navigation/native';
 
 
 import styles from '../Styles/SignIn2Style';
 import CustomButton from '../components/Button';
-import CustomSwitch from '../components/Checkmark';
 import PfpUpload from '../components/ImageInsert';
 
 import { useSQLiteContext } from "expo-sqlite";
 import { registerUser } from '../Database/db';
 import * as FileSystem from 'expo-file-system';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 export default function SigInScreen2({route,}) {
   const DB = useSQLiteContext();
@@ -105,15 +106,6 @@ export default function SigInScreen2({route,}) {
 
 
         <PfpUpload name={name} onImageSelected={handleImageSelected}/>
-
-       
-        <View style={styles.Toggle}>
-
-          <Text style={styles.ToggleLabel}> Stay Logged In?</Text>
-          <CustomSwitch  onToggle={handleToggle} />
-
-        </View>
-        
 
         <CustomButton 
           onPress={() => HandleSingIn()}

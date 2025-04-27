@@ -1,5 +1,7 @@
 import * as React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { View, Text, StyleSheet } from 'react-native';
+import { useState,useEffect } from 'react';
 
 import LoginScreen from '../screens/Login';
 import HomeScreen from '../screens/HomeScreen';
@@ -9,10 +11,25 @@ import SettingsScreen from '../screens/SettingsScreen';
 import SigInScreen from '../screens/SignInScren';
 import SigInScreen2 from '../screens/SignInScren2';
 import SeeNoteScreen from '../screens/SeeNoteScreen';
+import { getCurrentUser } from '../Database/db';
 
 const Stack = createNativeStackNavigator();
 
 export default function RootStack(){
+
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+    
+        const loadData = async () => {
+
+            const session = await getCurrentUser();
+            setUser(session.userName);
+        };
+    
+        loadData();
+
+    }, []);
 
 
     return(
@@ -22,7 +39,9 @@ export default function RootStack(){
             <Stack.Screen 
                 name="Login" 
                 component={LoginScreen}
-                options={{headerShown: false}} 
+                options={{headerShown:false}}
+                
+
                 
             />
 
@@ -31,10 +50,24 @@ export default function RootStack(){
                 component={HomeScreen} 
                 options={{
                     headerShown: true,
-                    title:"",
+                    title: "", 
+
+                    headerTitle: () => (
+                        <View>
+
+                            <Text style={{fontFamily:'Mx437', fontSize: 20, fontWeight: 'bold'}}> {user || "Loading..."} </Text>
+
+                        </View>
+                    ),
+
+                    headerTitleStyle: {
+                        fontFamily: 'Mx437',  
+                        fontSize: 20,        
+                        fontWeight: 'bold',
+                    },
+
                     headerRight: () => <GoUserSettings />
-                
-                }} 
+                }}
             />
 
             <Stack.Screen 
@@ -74,4 +107,3 @@ export default function RootStack(){
     );
 
 }
-

@@ -39,7 +39,7 @@ export default function Index() {
           title TEXT ,
           body TEXT, 
           noteType TEXT, 
-          videoPath TEXT,
+          filePath TEXT,
           userId INTEGER,
           FOREIGN KEY(userId) REFERENCES users(id) ON DELETE CASCADE);`
       );
