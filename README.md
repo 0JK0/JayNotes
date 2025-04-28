@@ -19,16 +19,6 @@ JayNotes is built with React Native and Expo and is designed to work fully offli
 
 - Profile Management: Secure login with password protection, along with quick access to recent user profiles by displaying profile pictures.
 
-## Tech Stack
-
-- React Native: Framework for building cross-platform mobile apps.
-
-- Expo: Provides tools for development and deployment of React Native apps.
-
-- Expo Local Storage: Stores notes and user data securely on the device.
-
-- Expo-SQLite: Manages and organizes the local database for efficient offline access.
-
 ## Installation
 
 JayNotes is available as a direct APK download for Android.
@@ -37,7 +27,6 @@ JayNotes is available as a direct APK download for Android.
 2. [Download The Latest APK](https://github.com/0JK0/JayNotes/releases)
 3. Transfer it to your Android device if needed.
 4. Open it and follow the installation prompts.
-
 
 ## How It Works
 
@@ -58,3 +47,13 @@ Upon opening the app, users can:
  - Rich Text Editor: Add support for text formatting, such as bold, italics, and bullet points.
 
  - File Attachments: Allow users to attach images or documents to text notes.
+
+## Tech Stack
+
+- React Native: Framework for building cross-platform mobile apps.
+
+- Expo: Provides tools for development and deployment of React Native apps.
+
+- Expo Local Storage: Stores notes and user data securely on the device.
+
+- Expo-SQLite: Manages and organizes the local database for efficient offline access.
