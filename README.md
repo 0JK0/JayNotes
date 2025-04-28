@@ -1,4 +1,6 @@
-# JayNotes
+![JayNotes Icon](demoImages/icon.png )
+# JayNotes 
+
 JayNotes is a simple and efficient note-taking app designed for Android. It allows you to create and manage text, audio, and video notes, and organize them by date using an integrated calendar. The app also supports multiple user profiles, so you can keep each user's notes separate and secure.
 
 JayNotes is built with React Native and Expo and is designed to work fully offline. All data—text, audio, and video notes—are stored locally on the device.
