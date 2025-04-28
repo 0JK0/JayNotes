@@ -69,8 +69,8 @@ Upon opening the app, users can:
 
 ## Contact
 If you have any questions or suggestions do not feel free to reach out to me, Thanks <3 :
-- Email:
-- LinkedIn: [None](https://www.linkedin.com/in/yourusername/)
+- Email: JulianOsorioProf22@gmail.com
+- LinkedIn: [Julian Monsalve](https://www.linkedin.com/in/julian-monsalve-69420-osorio/)
 - GitHub: [0JK0](https://github.com/0JK0)
 
 
