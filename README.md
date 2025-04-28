@@ -7,7 +7,7 @@ JayNotes is built with React Native and Expo and is designed to work fully offli
 
 - ### [How To Install](#Installation)
 - ### [How Does It Work?](#How-It-Works)
-- ### [Things To Imrpove](#Future-Improvements)
+- ### [Things To Improve](#Future-Improvements)
 - ### [Contact Info](#Contact)
 
 ## Features
