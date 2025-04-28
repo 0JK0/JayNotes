@@ -1,5 +1,5 @@
 import { Text, View, ScrollView } from 'react-native';
-import React, { useState,useRef} from 'react';
+import React, { useState,useRef,useCallback} from 'react';
 import {useNavigation,useFocusEffect } from '@react-navigation/native';
 
 import styles from '../Styles/HomeStyle';
@@ -14,16 +14,16 @@ export default function HomeScreen({ route }) {
   const navigation = useNavigation();
 
   const [refresh, setRefresh] = useState(false);
-  const hasFocusedOnce = useRef(false); // This ref tracks if screen has been focused
+  const hasFocusedOnce = useRef(false);
 
   useFocusEffect(() => {
     if (!hasFocusedOnce.current) {
       hasFocusedOnce.current = true;
-      setRefresh(prev => !prev);  // Trigger refresh once
+      setRefresh(prev => !prev);  
     }
     
     return () => {
-      // Cleanup or reset state if needed
+      
     };
   });
  

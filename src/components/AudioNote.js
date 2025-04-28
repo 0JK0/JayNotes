@@ -5,6 +5,9 @@ import Icon from 'react-native-vector-icons/Feather';
 
 import CustomButton from './Button';
 
+
+// I KNOW THERE IS THE NO PLAYBACK ISSUE BUT I GIVE UP ATT: JAY
+
 export const AudioNoteComponent = ({onAudioStop}) => {
     const [recording, setRecording] = useState();
     const [recordingData, setRecordingData] = useState(null);
@@ -13,26 +16,68 @@ export const AudioNoteComponent = ({onAudioStop}) => {
     const [remainingTime, setRemainingTime] = useState(null);
     const [intervalId, setIntervalId] = useState(null); 
 
+    useEffect(() => {
+        return () => {
+            console.log("Component is unmounting, cleaning up recording...");
+            if (recording) {
+                recording.getStatusAsync()
+                    .then((status) => {
+                        if (status.isRecording) {
+                            return recording.stopAndUnloadAsync();
+                        } else {
+                            console.log("Recording already stopped/unloaded, no need to stop again.");
+                            return Promise.resolve();
+                        }
+                    })
+                    .then(() => {
+                        console.log("Recording stopped cleanly on unmount.");
+                    })
+                    .catch((error) => {
+                        console.error("Error cleaning up recording on unmount:", error);
+                    });
+            }
+        };
+    }, [recording]);
+
     async function startRecording() {
 
         try{
 
             const permission = await Audio.requestPermissionsAsync();
 
-            if (permission.status === "granted"){
-
-                await Audio.setAudioModeAsync({
-
-                    allowsRecordingIOS: true,
-                    playsInSilentModeIOS: true,
-
-                });
-
-                const { recording } = await Audio.Recording.createAsync( Audio.RecordingOptionsPresets.HIGH_QUALITY);
-                setRecording(recording);
-                console.log('.......Recording started.....');
-
+            if (permission.status !== "granted") {
+                console.error("Permission to record not granted");
+                return;
             }
+
+            if (recording) {
+
+                console.log('Stopping and unloading previous recording...');
+                await recording.stopAndUnloadAsync();
+
+                setRecording(undefined);
+                setRecordingData(null);
+                setAudioUri('');
+
+                if (intervalId) {
+
+                    clearInterval(intervalId);
+                    setIntervalId(null);
+
+                }
+            }
+
+
+            await Audio.setAudioModeAsync({
+
+                allowsRecordingIOS: true,
+                playsInSilentModeIOS: true,
+
+            });
+
+            const { recording } = await Audio.Recording.createAsync( Audio.RecordingOptionsPresets.HIGH_QUALITY);
+            setRecording(recording);
+            console.log('.......Recording started.....');
 
 
         } catch(error){
@@ -43,41 +88,45 @@ export const AudioNoteComponent = ({onAudioStop}) => {
     }
 
     async function stopRecording() {
-
+        if (!recording) {
+            console.log("No active recording to stop.");
+            return;
+        }
+    
         console.log('Stopping recording..');
-        
-
-        try{
-        
-            await recording.stopAndUnloadAsync(); 
-
-            const uri = recording.getURI(); 
-        
-            const { sound, status } = await recording.createNewLoadedSoundAsync(); 
-        
-            
+    
+        try {
+            const status = await recording.getStatusAsync();
+            if (status.isRecording) {
+                await recording.stopAndUnloadAsync();
+                console.log('Recording stopped.');
+            } else {
+                console.log('Recording already stopped.');
+            }
+    
+            const uri = recording.getURI();
+    
+            const { sound, status: soundStatus } = await recording.createNewLoadedSoundAsync();
+    
             setRecordingData({
                 sound: sound,
-                duration: status.durationMillis,
+                duration: soundStatus.durationMillis,
                 file: uri,
             });
-            
-            setRemainingTime(status.durationMillis);
-            setAudioUri(uri); 
-            setRecording(undefined); 
-        
-            console.log('Recording stopped and stored at', uri);
-
+    
+            setRemainingTime(soundStatus.durationMillis);
+            setAudioUri(uri);
+            setRecording(undefined);
+    
+            console.log('Recording stored at', uri);
+    
             if (onAudioStop) {
                 onAudioStop(uri);
             }
-
-        } catch(error){
-
-            console.error("stopRecording ERROR: ",error)
-
+    
+        } catch (error) {
+            console.error("stopRecording ERROR: ", error);
         }
-
     }
 
     function getDurationFormatted(milliseconds){
@@ -101,41 +150,67 @@ export const AudioNoteComponent = ({onAudioStop}) => {
     }
 
     async function togglePlayback() {
+        if (!recordingData?.sound) {
+            console.error("No sound loaded to play.");
+            return;
+        }
+    
+        const status = await recordingData.sound.getStatusAsync();
+    
         if (isPlaying) {
-            
             await recordingData.sound.pauseAsync();
-
             if (intervalId) {
-                clearInterval(intervalId); 
+                clearInterval(intervalId);
+                setIntervalId(null);
             }
+            setIsPlaying(false);
         } else {
             
-            await recordingData.sound.replayAsync();
+            if (status.positionMillis >= recordingData.duration) {
+                await recordingData.sound.setPositionAsync(0);
+            }
+            
+            await recordingData.sound.playAsync();
             startTrackingTime();
+            setIsPlaying(true);
         }
-
-        
-        setIsPlaying(!isPlaying);
     }
+    
+    
 
     function startTrackingTime() {
         const interval = setInterval(async () => {
-
             const status = await recordingData.sound.getStatusAsync();
-
+    
             if (status.isPlaying) {
-
                 const timeLeft = recordingData.duration - status.positionMillis;
-                setRemainingTime(timeLeft);  
-
+                setRemainingTime(timeLeft);
+                
+                
+                if (timeLeft <= 0) {
+                    clearInterval(interval);
+                    setIntervalId(null);
+                    setIsPlaying(false);
+                    
+                    
+                    await recordingData.sound.setPositionAsync(0);
+                    
+                    
+                    if (onAudioStop) {
+                        onAudioStop(audioUri);
+                    }
+                }
             } else {
-
                 clearInterval(interval);
-                setIntervalId(null);  
+                setIntervalId(null);
+                setIsPlaying(false);
+                await recordingData.sound.setPositionAsync(0);
             }
-        }, 1000);  
-        setIntervalId(interval);  
+        }, 1000);
+    
+        setIntervalId(interval);
     }
+    
 
 
     return(

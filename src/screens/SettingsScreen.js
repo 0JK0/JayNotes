@@ -7,7 +7,7 @@ import { useSQLiteContext } from "expo-sqlite";
 import styles from '../Styles/SettingsStyle';
 import SettingsButton from '../components/SettingsButton'
 
-import { getCurrentUser,getProfilePicture,clearUserSession,deleteUser } from '../Database/db';
+import { getCurrentUser,getProfilePicture,clearUserSession,deleteUser,deleteFromRecentUsers } from '../Database/db';
 
 
 
@@ -67,6 +67,7 @@ function SettingsScreen({ }) {
 
             await deleteUser(userId,user, DB);
             await clearUserSession();
+            await deleteFromRecentUsers(userId);
 
             console.log("Attempting to reset navigation");
             navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
