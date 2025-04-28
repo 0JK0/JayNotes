@@ -15,11 +15,15 @@ JayNotes is built with React Native and Expo and is designed to work fully offli
 
 - Calendar Integration: Assign each note to a specific date and access them easily through an intuitive calendar interface.
 
+  ![HomeScreen](demoImages/HomeScreen.jpeg)
+
 - Multi-User Support: Multiple users can share the same device, each with their own notes and profiles.
 
 - Offline Access: All data is stored locally, ensuring the app works seamlessly even without an internet connection.
 
 - Profile Management: Secure login with password protection, along with quick access to recent user profiles by displaying profile pictures.
+
+  ![QuickLogin](demoImages/QuickLogin.jpeg)
 
 ## Installation
 
@@ -59,3 +63,19 @@ Upon opening the app, users can:
 - Expo Local Storage: Stores notes and user data securely on the device.
 
 - Expo-SQLite: Manages and organizes the local database for efficient offline access.
+  ![QuickLogin](demoImages/TechStack.png)
+
+
+## Contact
+If you have any questions or suggestions do not feel free to reach out to me, Thanks <3 :
+- Email:
+- LinkedIn: [None](https://www.linkedin.com/in/yourusername/)
+- GitHub: [0JK0](https://github.com/0JK0)
+
+
+
+                            ╱|、
+                          (˚ˎ 。7  
+                           |、˜〵          
+                          じしˍ,)ノ
+
