@@ -7,19 +7,47 @@ import { useNavigation } from '@react-navigation/native';
 import { useSQLiteContext } from "expo-sqlite";
 
 import styles from '../Styles/LoginStyle';
-import { validateCredentials,saveUserSession,getUserId } from '../Database/db';
+import { validateCredentials,saveUserSession,getUserId,addToRecentUsers,getRecentUsers } from '../Database/db';
 
+import RecentUsers from '../components/QuickLogin';
+ 
 
 export default function LoginScreen() {
 
   const DB = useSQLiteContext();
 
-  // Init UseNavigation
   const navigation = useNavigation();
-
-  // Getting Name AND Password Text
+  
   const [Name, setName] = useState('')
   const [Password, setPassword] = useState('')
+
+  const [showLogin,setShowLogin] = useState(true)
+  const [recent,setRecent] = useState();
+
+  useEffect(() => {
+
+    const loadData = async () => {
+      
+      const recent = await getRecentUsers();
+      setRecent(recent);
+
+    };
+    
+    loadData();
+
+  }, []);
+
+
+  useEffect(() => {
+
+    if (recent && recent.length > 0) {
+
+      setShowLogin(false);
+
+    }
+
+  }, [recent]);
+
 
   const handleLogin = async() => {
      
@@ -37,6 +65,7 @@ export default function LoginScreen() {
         }
 
         await saveUserSession(Name,userId);
+        await addToRecentUsers(userId, Name);
         navigation.replace('Home', {name: Name,})
 
       } else {
@@ -59,60 +88,89 @@ export default function LoginScreen() {
 
     <View style={styles.container}>
 
-        <View style={styles.CustomButton}>
-         <CustomButton 
-         onPress={() => navigation.navigate('SigIn')}
-         buttonText={"SIGN IN"}
-
-         anchura={108}
-         altura={45}
-         fontSize={18}
-
-         /> 
-        </View>
-        
-
-        <Text style={styles.Text} > LOG IN </Text>
-
-        <TextInput
-
-          style={styles.TextInput} 
-          placeholder='Name' 
-          placeholderTextColor='#c6c3c3' 
-          
-          // Asing the Value of the TextInput to Name 
-          value={Name}
-          
-          // When it cahnges activate the UseState Switch so the value is passed to the Var
-          onChangeText={setName}
-          
-        /> 
-
-        <TextInput 
-
-          style={styles.TextInput} 
-          placeholder='Password' 
-          placeholderTextColor='#c6c3c3' 
-          secureTextEntry={true}
-          textContentType="password"
-
-          value={Password}
-          onChangeText={setPassword}
-          
-          
-        />
-
+      <View style={styles.CustomButton}>
         <CustomButton 
-          onPress={handleLogin}  
-          buttonText="SUBMIT"
+          onPress={() => navigation.navigate('SigIn')}
+          buttonText={"SIGN IN"}
 
-          anchura={110}
+          anchura={120}
           altura={50}
-          fontSize={19}
+          fontSize={20}
+
+        /> 
+      </View>
+
+      {showLogin && (
+
+        <View style={styles.container}> 
+
+          <Text style={styles.Text} > LOG IN </Text>
+
+          <TextInput
+
+            style={styles.TextInput} 
+            placeholder='Name' 
+            placeholderTextColor='#c6c3c3' 
+            
+            
+            value={Name}
+            
+            onChangeText={setName}
+            
+          /> 
+
+          <TextInput 
+
+            style={styles.TextInput} 
+            placeholder='Password' 
+            placeholderTextColor='#c6c3c3' 
+            secureTextEntry={true}
+            textContentType="password"
+
+            value={Password}
+            onChangeText={setPassword}
+            
+            
+          />
+
+          <CustomButton 
+            onPress={handleLogin}  
+            buttonText="SUBMIT"
+
+            anchura={120}
+            altura={55}
+            fontSize={20}
+            
+          />
+
+
+        </View>
+
+    )}
+
+    {!showLogin && (
+
+      <View style={styles.container}>
+        
+        <RecentUsers />
+
+      <CustomButton 
+          onPress={() => {setShowLogin(true)}}  
+          buttonText="OR LOGIN"
+
+          anchura={180}
+          altura={60}
+          fontSize={25}
           
         />
 
+      </View>
 
+     
+
+    )}
+      
+    
       
     </View>
   );

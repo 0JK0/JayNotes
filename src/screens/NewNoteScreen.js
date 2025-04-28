@@ -286,7 +286,7 @@ export default function NewNoteScreen({  }) {
                 />
             )}
 
-            {(!fileUri && !audioNote) && (
+            {(noteType !== 'video' && !audioNote) && (
                 <TextInput
                     style={styles.NoteBody}
                     multiline={true}
@@ -299,7 +299,7 @@ export default function NewNoteScreen({  }) {
                 />
             )}
 
-            {audioNote && (
+            {(noteType === 'audio' && audioNote) && (
                 <AudioNoteComponent onAudioStop={handleAudioStop} />
             )}
 

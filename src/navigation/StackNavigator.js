@@ -1,36 +1,23 @@
 import * as React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useFocusEffect } from '@react-navigation/native';
 import { View, Text, StyleSheet } from 'react-native';
-import { useState,useEffect } from 'react';
+import { useState,useCallback } from 'react';
 
 import LoginScreen from '../screens/Login';
 import HomeScreen from '../screens/HomeScreen';
 import NewNoteScreen from '../screens/NewNoteScreen';
-import GoUserSettings from '../components/PfpButton';
 import SettingsScreen from '../screens/SettingsScreen';
 import SigInScreen from '../screens/SignInScren';
 import SigInScreen2 from '../screens/SignInScren2';
 import SeeNoteScreen from '../screens/SeeNoteScreen';
-import { getCurrentUser } from '../Database/db';
+
+import GoUserSettings from '../components/PfpButton';
+import UserNameHeader from '../components/HeaderName'
 
 const Stack = createNativeStackNavigator();
 
 export default function RootStack(){
-
-    const [user, setUser] = useState(null);
-
-    useEffect(() => {
-    
-        const loadData = async () => {
-
-            const session = await getCurrentUser();
-            setUser(session.userName);
-        };
-    
-        loadData();
-
-    }, []);
-
 
     return(
 
@@ -41,8 +28,6 @@ export default function RootStack(){
                 component={LoginScreen}
                 options={{headerShown:false}}
                 
-
-                
             />
 
             <Stack.Screen 
@@ -50,23 +35,10 @@ export default function RootStack(){
                 component={HomeScreen} 
                 options={{
                     headerShown: true,
-                    title: "", 
+                    title:"",
 
-                    headerTitle: () => (
-                        <View>
-
-                            <Text style={{fontFamily:'Mx437', fontSize: 20, fontWeight: 'bold'}}> {user || "Loading..."} </Text>
-
-                        </View>
-                    ),
-
-                    headerTitleStyle: {
-                        fontFamily: 'Mx437',  
-                        fontSize: 20,        
-                        fontWeight: 'bold',
-                    },
-
-                    headerRight: () => <GoUserSettings />
+                    headerRight: () => <GoUserSettings />,
+                    headerLeft: () => <UserNameHeader />
                 }}
             />
 

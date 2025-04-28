@@ -32,8 +32,8 @@ const styles = StyleSheet.create({
   },
 
   TextInput: {
-        width: '70%',
-        maxHeight: 60,
+        width: '75%',
+        maxHeight: 70,
 
         flex: 1,
         flexShrink:1,
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
 
         marginBottom: 15,
 
-        fontSize: 20,
+        fontSize: 22,
         fontFamily:'Mx437',
         lineHeight: 18,
         color:'#fff'
@@ -63,6 +63,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 50,
     right: 10,
+    zIndex: 90,
 
     margin:0,
     padding:0,

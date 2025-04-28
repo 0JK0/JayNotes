@@ -1,5 +1,6 @@
 import { useSQLiteContext } from "expo-sqlite";
 import * as SecureStore from 'expo-secure-store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Crypto from 'expo-crypto';
 import * as FileSystem from 'expo-file-system';
 
@@ -231,4 +232,80 @@ export const clearUserSession = async () => {
 
     }
 };
+  
+export const addToRecentUsers = async (userId: number, userName: string) => {
+    try {
+      const recentUsersString = await AsyncStorage.getItem('recentUsers');
+      let recentUsers = recentUsersString ? JSON.parse(recentUsersString) : [];
+  
+      
+      recentUsers = recentUsers.filter((user: any) => user.userId !== userId);
+  
+    
+      recentUsers.unshift({ userId, userName });
+  
+      // Limit to  3 users
+      if (recentUsers.length > 3) {
+        recentUsers = recentUsers.slice(0, 3);
+      }
+  
+      await AsyncStorage.setItem('recentUsers', JSON.stringify(recentUsers));
+      console.log('Recent users updated:', recentUsers);
+  
+    } catch (error) {
+
+      console.error('addToRecentUsers ERROR:', error);
+    }
+  };
+  
+
+  export const getRecentUsers = async () => {
+    try {
+
+      const recentUsersString = await AsyncStorage.getItem('recentUsers');
+
+      if (!recentUsersString) return [];
+      return JSON.parse(recentUsersString);
+
+    } catch (error) {
+        
+      console.error('getRecentUsers error:', error);
+      return [];
+    }
+  };
+
+  export const deleteFromRecentUsers = async (userId: number) => {
+    try {
+      const recentUsersString = await AsyncStorage.getItem('recentUsers');
+      
+      
+      if (!recentUsersString) {
+        console.log('No recent users to delete from');
+        return;
+      }
+      
+
+      let recentUsers = JSON.parse(recentUsersString);
+      
+      // Check if user exists before filtering
+      const userExists = recentUsers.some((user: any) => user.userId === userId);
+      
+      if (!userExists) {
+        console.log(`User with ID ${userId} not found in recent users`);
+        return;
+      }
+      
+      const updatedRecentUsers = recentUsers.filter((user: any) => user.userId !== userId);
+      
+    
+      await AsyncStorage.setItem('recentUsers', JSON.stringify(updatedRecentUsers));
+      console.log(`User with ID ${userId} removed from recent users`);
+      console.log('Updated recent users:', updatedRecentUsers);
+      
+      return updatedRecentUsers;
+    } catch (error) {
+      console.error('deleteFromRecentUsers ERROR:', error);
+      throw error;
+    }
+  };
   
