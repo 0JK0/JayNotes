@@ -5,7 +5,7 @@ JayNotes is a simple and efficient note-taking app designed for Android. It allo
 
 JayNotes is built with React Native and Expo and is designed to work fully offline. All data—text, audio, and video notes—are stored locally on the device.
 
-- ### [How To Install](#Installation)
+- ### [How To Install?](#Installation)
 - ### [How Does It Work?](#How-It-Works)
 - ### [Things To Improve](#Future-Improvements)
 - ### [Contact Info](#Contact)
